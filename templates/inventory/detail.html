@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ v.registration }}: {{ v.year }} {{ v.make }} {{ v.model }}</h1>
+<div class="panel">
+  <p>{{ v.get_status_display }}{% if v.archived %} (archived){% endif %}. Mileage {{ v.mileage }}.
+     Bought for £{{ v.purchase_price|floatformat:2 }} on {{ v.purchase_date }}.</p>
+  {% if v.status == "sold" %}
+  <p>Sold for £{{ v.sale_price|floatformat:2 }} on {{ v.sale_date }}.
+     Profit: <strong class="{% if v.profit < 0 %}loss{% else %}gain{% endif %}">£{{ v.profit|floatformat:2 }}</strong></p>
+  {% endif %}
+  {% if user.is_staff %}
+  <div class="actions">
+    <a href="{% url 'vehicle_edit' v.pk %}">Edit</a>
+    {% if v.status == "available" %}<a href="{% url 'vehicle_sell' v.pk %}">Mark as sold</a>{% endif %}
+    {% if not v.archived %}
+    <form method="post" action="{% url 'vehicle_archive' v.pk %}" data-confirm="Archive this car?">{% csrf_token %}<button class="link">Archive</button></form>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+<h2>Expenses: £{{ v.total_expenses|floatformat:2 }}</h2>
+<div class="scroll"><table>
+  <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
+  {% for e in v.expenses.all %}<tr><td>{{ e.date }}</td><td>{{ e.description }}</td><td>£{{ e.amount|floatformat:2 }}</td></tr>
+  {% empty %}<tr><td colspan="3">No expenses recorded.</td></tr>{% endfor %}
+</table></div>
+{% if v.status == "available" %}
+<h3>Add an expense</h3>
+<form method="post" action="{% url 'expense_add' v.pk %}" class="panel narrow">{% csrf_token %}{{ form.as_p }}<button>Add expense</button></form>
+{% endif %}
+{% endblock %}

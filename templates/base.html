@@ -1,0 +1,27 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Diamond Autos{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="{% url 'dashboard' %}">Diamond Autos</a>
+    {% if user.is_authenticated %}
+    <nav>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'vehicle_list' %}">Stock</a>
+      <a href="{% url 'vehicle_create' %}">Add car</a>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link">Log out ({{ user.username }})</button></form>
+    </nav>
+    {% endif %}
+  </header>
+  <main>
+    {% for m in messages %}<p class="msg {{ m.tags }}">{{ m }}</p>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

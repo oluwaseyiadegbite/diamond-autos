@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="stats">
+  <div class="panel"><span>Available cars</span><strong>{{ available_count }}</strong></div>
+  <div class="panel"><span>Sold cars</span><strong>{{ sold_count }}</strong></div>
+  <div class="panel"><span>Stock value (cost incl. expenses)</span><strong>£{{ stock_value|floatformat:2 }}</strong></div>
+  <div class="panel"><span>Recorded profit</span><strong class="{% if profit < 0 %}loss{% else %}gain{% endif %}">£{{ profit|floatformat:2 }}</strong></div>
+</div>
+{% endblock %}

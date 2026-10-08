@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Stock</h1>
+<form method="get" class="filters">
+  <input name="q" value="{{ q }}" placeholder="Search reg, make or model">
+  <select name="status">
+    <option value="">All</option>
+    <option value="available" {% if status == "available" %}selected{% endif %}>Available</option>
+    <option value="sold" {% if status == "sold" %}selected{% endif %}>Sold</option>
+  </select>
+  <label><input type="checkbox" name="archived" value="1" {% if archived %}checked{% endif %}> Show archived</label>
+  <button>Filter</button>
+</form>
+<div class="scroll"><table>
+  <tr><th>Reg</th><th>Car</th><th>Status</th><th>Cost</th><th>Profit</th><th>Days in stock</th></tr>
+  {% for v in vehicles %}
+  <tr>
+    <td><a href="{% url 'vehicle_detail' v.pk %}">{{ v.registration }}</a></td>
+    <td>{{ v.year }} {{ v.make }} {{ v.model }}</td>
+    <td>{{ v.get_status_display }}{% if v.archived %} (archived){% endif %}</td>
+    <td>£{{ v.total_cost|floatformat:2 }}</td>
+    <td>{% if v.profit is not None %}£{{ v.profit|floatformat:2 }}{% else %}-{% endif %}</td>
+    <td>{{ v.days_in_stock }}</td>
+  </tr>
+  {% empty %}<tr><td colspan="6">No cars found.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}
